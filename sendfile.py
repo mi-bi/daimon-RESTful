@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from flask import Flask, send_file, request
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, reqparse
 from datetime import datetime
 
 import launcher
@@ -64,13 +64,58 @@ class Control(Resource):
         ret.update({'jobs':list(launcher.Jobs)})
         return ret
 
+    def listTODO(self):
+        ret=[]
+        for j in launcher.Jobs.values():
+            if j.properties['state'] == 'todo':
+                ret.append(j.get_id())
+        return ret
+    
+    def show(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('jid')
+        args=parser.parse_args()
+        try:
+            job=launcher.Jobs[args['jid']]
+            return {'properties':job.properties,'options':job.options}
+        except KeyError:
+            return 'Missing',404
+ 
+    def set(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('jid')
+        parser.add_argument('state')
+        parser.add_argument('slurm')
+        args=parser.parse_args()
+        try:
+            job=launcher.Jobs[args['jid']]
+            if args['state'] is not None:
+                job.properties['state']=args['state']
+            if args['slurm'] is not None:
+                job.properties['slurm']=args['slurm']
+            return job.properties
+        except KeyError:
+            return 'Missing',404
+ 
+
+    def post(self,cmd):
+        return self.get(cmd)
+
     def get(self,cmd):
         if cmd == 'list':
             return self.listJobs()
         elif cmd == 'expire_all':
             launcher.Jobs_expire()
+            return 'OK',200
+        elif cmd == 'show':
+            return self.show()
+        elif cmd == 'set':
+            return self.set()
+        elif cmd == 'todo':
+            return self.listTODO()
         else:
             return 'command not found',404
+
 
 app = Flask(__name__)
 api = Api(app)

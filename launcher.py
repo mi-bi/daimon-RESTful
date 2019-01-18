@@ -26,6 +26,7 @@ class Launch(Popen):
         self.jobid = self.name+self._id
         self.wdir = tempfile.TemporaryDirectory(prefix='daimon-')
         self.options = argjson
+        self.properties = {'id':self._id,'state':'todo','token':self.wdir.name.split('daimon-')[1]}
         self.timestamp = datetime.utcnow()
         self.prepare()
         if 'arguments' not in self.options:
