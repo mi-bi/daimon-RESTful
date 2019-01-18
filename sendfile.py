@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from flask import Flask, send_file, request
 from flask_restful import Api, Resource
@@ -31,11 +31,11 @@ request JSON
         date=datetime.strptime(mdata['initialization_time'],"%Y-%m-%dT%H:%M:%S.%fZ")
         sdate=date.strftime("%Y%m%d_%H%M")
         fname="leakage_model_"+sdate+"_{0:03d}.txt".format(_IIN)
-        mdata={'app':'/home/skorka/PycharmProjects/daimon/jobexec.sh'}
+        mdata.update({'app':'/opt/daimon/jobexec.sh'})
         mdata.update({'id':fname})
         mdata.update({'arguments':''})
-        if 'timeout' not in mdata:
-            mdata.update({'timeout':15})
+        if 'lifetime' not in mdata:
+            mdata.update({'lifetime':3600})
       
         run = launcher.Launch(fname,mdata)
         ret['file_name'] = run.get_id()
@@ -49,12 +49,13 @@ class Getfile(Resource):
 #        return send_file("/tmp/nowy")
   
     def get(self,_id):
+        filename='/opt/daimon/none.txt'
         try:
             filename=launcher.Jobs[_id].get_path()+'/result.nc'
         except KeyError:
-            filename='/tmp/brak.txt'
+            return 'File not found',404
         launcher.Jobs_expire()
-        return send_file(filename),200
+        return send_file(filename,mimetype='',attachment_filename='result.nc',cache_timeout=3600)
 
 class Control(Resource):
     def listJobs(self):
@@ -79,5 +80,5 @@ api = Api(app)
 api.add_resource(Reqfile,"/daimon/request")
 api.add_resource(Control,"/daimon/control/<cmd>")
 api.add_resource(Getfile,"/daimon/getfile/<_id>")
-app.run(debug=True)
+app.run(host='0.0.0.0',port=8900,debug=False)
 
