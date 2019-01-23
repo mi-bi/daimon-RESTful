@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-OUTPUTFILE="result.nc"
+OUTPUTFILE="result.txt"
 
 date > $OUTPUTFILE
 sleep 3
