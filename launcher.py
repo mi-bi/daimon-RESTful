@@ -11,9 +11,12 @@ def jobs_del(_jid):
 
 def jobs_expire():
     try:
+        to_expire=[]
         for j in Jobs:
             if Jobs[j].expired():
-                jobs_del(j)
+                to_expire.append(j)
+        for j in to_expire:
+            del(Jobs[j])
     except Exception as e:
         print("Exception jobs_del")
         print(e)
