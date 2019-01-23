@@ -5,6 +5,7 @@ from flask_restful import Api, Resource, reqparse
 
 import launcher
 import config
+import os
 
 _IIN = 0
 VERSION = 0.3
@@ -32,6 +33,8 @@ class Getfile(Resource):
     def get(self,_id):
         try:
             filename=launcher.Jobs[_id].get_path()+'/'+config.resultFile
+            if not os.path.isfile(filename):
+                return 'File not ready',404
         except KeyError:
             return 'File not found',404
         launcher.jobs_expire()
