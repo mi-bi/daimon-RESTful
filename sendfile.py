@@ -109,14 +109,18 @@ class Control(Resource):
 
 class Help(Resource):
     def show(self):
-        out = {'request': 'POST JSON with job specification',
-             'getfile/<id>': 'Download results as file',
-             'control/list?state=<item>': 'show jobs with state item {todo,running,done,error}',
-             'control/show?id=<id>:': 'show all information about job',
-             'control/set': 'set status',
-             'control/version': 'show API version'
-             }
-        return out
+        return '''
+<table border=1>
+  <tr><th>COMMAND</th><th>description<th></tr>
+  <tr><td>request</td><td> POST JSON with job specification</td></tr>
+  <tr><td>getfile/&lt;id&gt;</td><td> Download results as file</td></tr>
+  <tr><td>control/list</td><td> list all jobs</td></tr>
+  <tr><td>control/list?state=&lt;state&gt;</td><td> list jobs with state: {todo,running,done,error, all}</td></tr>
+  <tr><td>control/show?id=&lt;id&gt;</td><td>show all information about job</td></tr>
+  <tr><td>control/set?id=&lt;id&gt;&amp;state=&lt;state&gt;</td><td>set status</td></tr>
+  <tr><td>control/version</td><td>show API version</td></tr>
+</table>
+             '''
 
     def get(self):
         return self.show(),200
