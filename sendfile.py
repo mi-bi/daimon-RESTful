@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from flask import Flask, send_file, request
+from flask import Flask, send_file, request, make_response
 from flask_restful import Api, Resource, reqparse
 
 import launcher
@@ -109,7 +109,8 @@ class Control(Resource):
 
 class Help(Resource):
     def show(self):
-        return '''
+        return '''<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><body>
 <table border=1>
   <tr><th>COMMAND</th><th>description<th></tr>
   <tr><td>request</td><td> POST JSON with job specification</td></tr>
@@ -120,13 +121,13 @@ class Help(Resource):
   <tr><td>control/set?id=&lt;id&gt;&amp;state=&lt;state&gt;</td><td>set status</td></tr>
   <tr><td>control/version</td><td>show API version</td></tr>
 </table>
-             '''
+</html></body>'''
 
     def get(self):
-        return self.show(),200
+        return make_response(self.show(),200)
 
     def post(self):
-        return self.show(),200
+        return make_response(self.show(),200)
 
 app = Flask(__name__)
 api = Api(app)
