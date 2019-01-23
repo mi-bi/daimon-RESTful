@@ -4,7 +4,7 @@ import os
 import subprocess
 import config
 from datetime import datetime
-webURL = urllib.urlopen('http://127.0.0.1:8900/daimon/control/list?state=todo')
+webURL = urllib.urlopen('http://{0:s}:{1:d}/daimon/control/list?state=todo'.format(config.addr, config.port))
 data = webURL.read()
 print(data)
 TODO = json.loads(data.decode())
@@ -29,7 +29,9 @@ for i in TODO:
     cmd_out = subprocess.check_output(cmd.split())
     ll = cmd_out.split()
     slurm_id=ll[len(ll)-1]
-    sw = urllib.urlopen('http://{0:s}:{1:d}/daimon/control/set?id={2:s}&slurm={3:s}&state=runnig'.format(config.addr,config.port,i,slurm_id))
+    sw = urllib.urlopen('http://{0:s}:{1:d}/daimon/control/set?id={2:s}&slurm={3:s}&state=runnig'
+                        .format(config.addr, config.port, i, slurm_id))
+
 
 
 
