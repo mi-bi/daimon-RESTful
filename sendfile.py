@@ -56,11 +56,11 @@ class Control(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('state')
         args = parser.parse_args()
-        status = args['state']
-        if status == 'all':
+        state = args['state']
+        if state == 'all' or state is None:
             return self.listJobs()
         else:
-            return self.listSTATE(status)
+            return self.listSTATE(state)
 
     def show(self):
         parser=reqparse.RequestParser()

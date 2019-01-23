@@ -10,9 +10,13 @@ def jobs_del(_jid):
     del(Jobs[str(_jid)])
 
 def jobs_expire():
-    for j in Jobs:
-        if Jobs[j].expired():
-            jobs_del(j)
+    try:
+        for j in Jobs:
+            if Jobs[j].expired():
+                jobs_del(j)
+    except Exception as e:
+        print("Exception jobs_del")
+        print(e)
 
 
 class Launch(Popen):
