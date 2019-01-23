@@ -64,22 +64,22 @@ class Control(Resource):
 
     def show(self):
         parser=reqparse.RequestParser()
-        parser.add_argument('jid')
+        parser.add_argument('id')
         args=parser.parse_args()
         try:
-            job=launcher.Jobs[args['jid']]
+            job=launcher.Jobs[args['id']]
             return {'properties':job.properties,'options':job.options}
         except KeyError:
             return 'Missing',404
  
     def set(self):
         parser=reqparse.RequestParser()
-        parser.add_argument('jid')
+        parser.add_argument('id')
         parser.add_argument('state')
         parser.add_argument('slurm')
         args=parser.parse_args()
         try:
-            job=launcher.Jobs[args['jid']]
+            job=launcher.Jobs[args['id']]
             if args['state'] is not None:
                 job.properties['state']=args['state']
             if args['slurm'] is not None:

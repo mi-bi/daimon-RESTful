@@ -11,7 +11,7 @@ TODO = json.loads(data.decode())
 #{u'properties': {u'state': u'todo', u'id': u'20190118212332081897', u'token': u'0yf5z99c'}, u'options': {u'initialization_time': u'2018-01-01T22:00:00.000Z', u'app': u'/opt/daimon/jobexec.sh', u'arguments': u'', u'lifetime': 3600, u'position': {u'geometry': {u'type': u'Point', u'coordinates': [15.413818359374998, 55.27442182695317]}, u'type': u'Feature'}, u'id': u'leakage_model_20180101_2200_003.txt', u'leakage_type': u'...'}}
 
 for i in TODO:
-    w = urllib.urlopen('http://{0:s}:{1:d}/daimon/control/show?jid={2:s}'.format(config.addr,config.port,i))
+    w = urllib.urlopen('http://{0:s}:{1:d}/daimon/control/show?id={2:s}'.format(config.addr,config.port,i))
     d2 = w.read()
     prop = json.loads(d2.decode('ascii'))
     print(prop)
@@ -29,7 +29,7 @@ for i in TODO:
     cmd_out = subprocess.check_output(cmd.split())
     ll = cmd_out.split()
     slurm_id=ll[len(ll)-1]
-    sw = urllib.urlopen('http://{0:s}:{1:d}/daimon/control/set?jid={2:s}?slurm={3:s}'.format(config.addr,config.port,i,slurm_id))
+    sw = urllib.urlopen('http://{0:s}:{1:d}/daimon/control/set?id={2:s}?slurm={3:s}'.format(config.addr,config.port,i,slurm_id))
 
 
 
