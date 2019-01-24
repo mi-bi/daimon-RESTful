@@ -13,7 +13,7 @@ def jobs_expire():
     try:
         to_expire=[]
         for j in Jobs:
-            if Jobs[j].expired():
+            if Jobs[j].expired() and Jobs[j].properties['state'] == 'done':
                 to_expire.append(j)
         for j in to_expire:
             del(Jobs[j])
@@ -37,9 +37,9 @@ class Launch(Popen):
         self.prepare()
         if 'arguments' not in self.options:
             self.options['arguments'] = ''
-        if 'lifetime' in self.options:
-            self.expire_period=timedelta(seconds=self.options['lifetime'])
-        else:
+        try:
+            self.expire_period=timedelta(seconds=int(self.options['lifetime']))
+        except:
             self.expire_period=timedelta(seconds=120*60)
 
         super().__init__([self.options['app'],self.options['arguments']],cwd=self.wdir.name, stdout=PIPE)
