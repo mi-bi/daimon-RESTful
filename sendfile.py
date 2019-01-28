@@ -8,7 +8,7 @@ import config
 import os
 
 _IIN = 0
-VERSION = 0.4
+VERSION = "0.4.1"
 
 class Reqfile(Resource):
     def post(self):
@@ -24,7 +24,7 @@ class Reqfile(Resource):
             mdata.update({'lifetime':3600})
         run = launcher.Launch(job_name,argjson=mdata,tmpdir=config.tmp)
         ret['file_name'] = run.get_id()
-        return ret,202
+        return ret,201
 
 
 
@@ -81,7 +81,7 @@ class Control(Resource):
         ret['properties']['timestamp']=job.timestamp.isoformat()
         return ret
 
-    def set(self):
+    def setProp(self):
         parser=reqparse.RequestParser()
         parser.add_argument('id')
         parser.add_argument('state')
@@ -94,7 +94,7 @@ class Control(Resource):
             if args['slurm'] is not None:
                 job.properties['slurm']=args['slurm']
             job.touch()
-            return job.properties
+            return job.properties,201
         except KeyError:
             return 'Missing',404
  
@@ -107,15 +107,27 @@ class Control(Resource):
             return self.list()
         elif cmd == 'expire_all':
             launcher.jobs_expire()
-            return 'OK',200
+            return 'Done',200
         elif cmd == 'show':
             return self.show()
         elif cmd == 'set':
-            return self.set()
+            return self.setProp()
         elif cmd == 'version':
             return VERSION
         else:
             return 'command not found',404
+
+    def put(self,cmd):
+        if cmd == 'set':
+            return self.setProp()
+        return 'command not founf',404
+
+    def patch(self,cmd):
+        if cmd == 'set':
+            return self.setProp()
+        return 'command not founf',404
+
+
 
 class Help(Resource):
     def show(self):
