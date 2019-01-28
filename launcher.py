@@ -56,6 +56,9 @@ class Launch(Popen):
         ep=self.expire_period
         return datetime.utcnow() - self.timestamp > ep
 
+    def touch(self):
+        self.timestamp=datetime.utcnow()
+
     def get_path(self):
         return self.wdir.name
 

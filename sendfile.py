@@ -8,7 +8,7 @@ import config
 import os
 
 _IIN = 0
-VERSION = 0.3
+VERSION = 0.4
 
 class Reqfile(Resource):
     def post(self):
@@ -16,15 +16,15 @@ class Reqfile(Resource):
         ret={}
         _IIN=_IIN+1
         mdata=request.get_json(force=True)
-        fname="job_{0:03d}".format(_IIN)
+        job_name="job_{0:03d}".format(_IIN)
         mdata.update({'app':config.app})
-        mdata.update({'id':fname})
+        mdata.update({'name':job_name})
         mdata.update({'arguments':''})
         if 'lifetime' not in mdata:
             mdata.update({'lifetime':3600})
-        run = launcher.Launch(fname,argjson=mdata,tmpdir=config.tmp)
+        run = launcher.Launch(job_name,argjson=mdata,tmpdir=config.tmp)
         ret['file_name'] = run.get_id()
-        return ret,200
+        return ret,202
 
 
 
@@ -71,10 +71,16 @@ class Control(Resource):
         args=parser.parse_args()
         try:
             job=launcher.Jobs[args['id']]
-            return {'properties':job.properties,'options':job.options}
         except KeyError:
             return 'Missing',404
- 
+        ret={'properties':job.properties.copy(),'options':job.options.copy()}
+        try:
+            del(ret['options']['app'])
+        except:
+            pass
+        ret['properties']['timestamp']=job.timestamp.isoformat()
+        return ret
+
     def set(self):
         parser=reqparse.RequestParser()
         parser.add_argument('id')
@@ -87,6 +93,7 @@ class Control(Resource):
                 job.properties['state']=args['state']
             if args['slurm'] is not None:
                 job.properties['slurm']=args['slurm']
+            job.touch()
             return job.properties
         except KeyError:
             return 'Missing',404
@@ -122,6 +129,7 @@ class Help(Resource):
   <tr><td>control/list?state=&lt;state&gt;</td><td> list jobs with state: {todo,running,done,error, all}</td></tr>
   <tr><td>control/show?id=&lt;id&gt;</td><td>show all information about job</td></tr>
   <tr><td>control/set?id=&lt;id&gt;&amp;state=&lt;state&gt;</td><td>set status</td></tr>
+  <tr><td>control/expire_all</td><td>delete all expired jobs</td></tr>
   <tr><td>control/version</td><td>show API version</td></tr>
 </table>
 </html></body>'''
