@@ -33,7 +33,7 @@ class Getfile(Resource):
     def get(self,_id):
         try:
             filename=launcher.Jobs[_id].get_path()+'/'+config.resultFile
-            if not os.path.isfile(filename):
+            if ( not os.path.isfile(filename) ) or ( launcher.Jobs[_id].properties['state'] != 'done' ) :
                 return 'File not ready',404
         except KeyError:
             return 'File not found',404
