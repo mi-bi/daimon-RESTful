@@ -8,7 +8,7 @@ import config
 import os
 
 _IIN = 0
-VERSION = "0.4.1"
+VERSION = "0.4.2"
 
 class Reqfile(Resource):
     def post(self):

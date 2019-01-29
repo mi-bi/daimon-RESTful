@@ -22,8 +22,8 @@ def jobs_expire():
         print(e)
 
 
-class Launch(Popen):
-
+#class Launch(Popen):
+class Launch:
     def __init__(self, _name, argjson, tmpdir):
         tmp_id = datetime.strftime(datetime.utcnow(), "%Y%m%d%H%M%S%f")
         while tmp_id in Jobs:
@@ -42,7 +42,7 @@ class Launch(Popen):
         except:
             self.expire_period=timedelta(seconds=120*60)
 
-        super().__init__([self.options['app'],self.options['arguments']],cwd=self.wdir.name, stdout=PIPE)
+    #    super().__init__([self.options['app'],self.options['arguments']],cwd=self.wdir.name, stdout=PIPE)
         Jobs.update({self._id: self})
 
     def prepare(self):
